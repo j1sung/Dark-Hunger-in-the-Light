@@ -27,7 +27,7 @@ namespace Dark
 		renderer = new Renderer(Vector2(setting.width, setting.height));
 
 		// 커서 끄기.
-		Util::TurnOffCursor();
+		//Util::TurnOffCursor();
 
 		// 랜덤 종자값 설정.
 		Util::SetRandomSeed();
@@ -154,26 +154,112 @@ namespace Dark
 		// 정리 작업.
 		std::cout << "Engine has been shutdown....\n";
 
-		// 
+		// 커서 켜기.
+		//Util::TurnOnCursor();
 	}
 
 	void Engine::LoadSetting()
 	{
+		// 엔진 설정 파일 열기.
+		FILE* file = nullptr;
+		fopen_s(&file, "../Config/Setting.txt", "rt");
 
+		// 예외 처리
+		if (!file)
+		{
+			std::cerr << "Error: Failed to open engine setting file.\n";
+			__debugbreak();
+			return;
+		}
+
+		// 파일에서 읽은 데이터를 담을 버퍼.
+		char buffer[2048] = {};
+
+		// 파일에서 읽기.
+		// buffer는 file에서 복사해옴.
+		// readSize == 읽은 바이트 수 (\0은 없어서 필요하면 붙여야 함)
+		size_t readSize = fread(buffer, sizeof(char), 2048, file);
+		
+		// 문자열 자르기 (파싱).
+		// 첫번째 문자열 분리할 때는 첫 파라미터 전달.
+		char* context = nullptr;
+		char* token = nullptr;
+
+		// \n 기준으로 분리해서 그 앞은 token으로 받고, 뒤의 시작주소를 context로 넣음
+		// \n이 \0으로 변경되어 문자열로 들어감.
+		token = strtok_s(buffer, "\n", &context);
+
+		// 반복해서 자르기.
+		while (token)
+		{
+			// 설정 텍스트에서 파라미터 이름만 읽기.
+			char header[10] = {};
+
+			// 문자열 읽기 함수 활용.
+			// 이때 "%s"로 읽으면 스페이스가 있으면 거기까지 읽음.
+			// token에서 공백전까지 읽고 header에 넣음.
+			sscanf_s(token, "%s", header, sizeof(header)); // ex) "framerate = 60"이면, 'framerate'만 읽음
+
+			// 문자열 비교 및 값 읽기.
+			if (strcmp(header, "framerate") == 0) // C 문자열 비교 strcmp, 같으면 0 반환.
+			{
+				sscanf_s(token, "framerate = %f", &setting.framerate);
+			}
+			else if (strcmp(header, "width") == 0)
+			{
+				sscanf_s(token, "width = %d", &setting.width);
+			}
+			else if (strcmp(header, "height") == 0)
+			{
+				sscanf_s(token, "height = %d", &setting.height);
+			}
+
+			// 개행 문자로 문자열 분리.
+			// 다음 위치부터(&context에 저장되어있음) 다시 파싱.
+			token = strtok_s(nullptr, "\n", &context);
+		}
+
+		// 파일 닫기.
+		fclose(file);
 	}
 
+
+
+	// Awake -> 씬에서 액터들 한번만 실행
 	void Engine::BeginPlay()
 	{
-
+		// 레벨이 있다면 이벤트 전달.
+		if (!mainLevel)
+		{
+			return;
+		}
+		
+		mainLevel->BeginPlay();
 	}
 
 	void Engine::Tick(float deltaTime)
 	{
+		// 레벨에 이벤트 전달.
+		if (!mainLevel)
+		{
+			return;
+		}
 
+		mainLevel->Tick(deltaTime);
 	}
 
 	void Engine::Draw()
 	{
+		// 레벨에 이벤트 흘리기.
+		if (!mainLevel)
+		{
+			return;
+		}
 
+		// 레벨의 모든 액터가 렌더 데이터 제출.
+		mainLevel->Draw();
+
+		// 렌더러에 그리기 명령 전달.
+		renderer->Draw();
 	}
 }

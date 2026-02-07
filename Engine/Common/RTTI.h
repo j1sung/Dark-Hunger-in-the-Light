@@ -53,6 +53,7 @@ namespace Dark
 	};
 }
 
+// runTimeTypeId가 객체 인스턴스의 고유 타입ID = 각 클래스마다 static으로 고유함. -> 이 타입 ID로 비교
 #define RTTI_DECLARATIONS(Type, ParentType)\
 friend class RTTI;\
 \
@@ -63,7 +64,7 @@ protected:\
 		return reinterpret_cast<size_t>(&runTimeTypeId);\
 	}\
 public:\
-	virtual const size_t&& GetType() const override { return Type::TypeIdClass();}\
+	virtual const size_t& GetType() const override { return Type::TypeIdClass();}\
 \
 	using super = ParentType;\
 \
@@ -81,4 +82,4 @@ public:\
 virtual bool Is(RTTI* const rtti) const override\
 {\
 	return Is(rtti->GetType());\
-\}
+}

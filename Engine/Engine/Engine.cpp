@@ -91,46 +91,89 @@ namespace Dark
 			// 고정 프레임 기법.
 			if (deltaTime >= oneFrameTime)
 			{
-
 				input->ProcessInput();
 
 				// 프레임 처리.
 				BeginPlay();
 				Tick(deltaTime);
 				Draw();
+
+				// 이전 시간 값 갱신.
+				previousTime = currentTime;
+
+				input->SavePreviousInputStates();
+
+				// 레벨에 요청된 추가/제거 처리.
+				if (mainLevel)
+				{
+					mainLevel->ProcessAddAndDestroyActors();
+				}
+				
+				// 레벨 전환 처리
+				if (nextLevel)
+				{
+					// 기존 레벨 제거.
+					SafeDelete(mainLevel);
+
+					// 전환할 레벨을 메인 레벨로 지정.
+					mainLevel = nextLevel;
+
+					// 포인터 정리.
+					nextLevel = nullptr;
+				}
 			}
 		}
-
+		// 정리.
+		Shutdown();
+		
 	}
+
 	void Engine::QuitEngine()
 	{
+		isQuit = true;
 	}
+
 	void Engine::SetNewLevel(Level* newLevel)
 	{
+		mainLevel = newLevel;
 	}
+
 	Engine& Engine::Get()
 	{
-		// TODO: insert return statement here
+		// 예외 처리.
+		if (!instance)
+		{
+			std::cerr << "Error: Engine::Get(). instance is null\n";
+			__debugbreak();
+		}
+		return *instance;
 	}
-	void Input::ProcessInput()
-	{
-	}
-	void Input::SavePreviousInputStates()
-	{
-	}
+
 	void Engine::Shutdown()
 	{
+		// 정리 작업.
+		std::cout << "Engine has been shutdown....\n";
+
+		// 
 	}
+
 	void Engine::LoadSetting()
 	{
+
 	}
+
 	void Engine::BeginPlay()
 	{
+
 	}
+
 	void Engine::Tick(float deltaTime)
 	{
+
 	}
+
 	void Engine::Draw()
 	{
+
 	}
 }

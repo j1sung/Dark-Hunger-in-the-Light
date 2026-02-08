@@ -198,7 +198,7 @@ namespace Dark
 			// 문자열 읽기 함수 활용.
 			// 이때 "%s"로 읽으면 스페이스가 있으면 거기까지 읽음.
 			// token에서 공백전까지 읽고 header에 넣음.
-			sscanf_s(token, "%s", header, sizeof(header)); // ex) "framerate = 60"이면, 'framerate'만 읽음
+			sscanf_s(token, "%s", header, 10); // ex) "framerate = 60"이면, 'framerate'만 읽음
 
 			// 문자열 비교 및 값 읽기.
 			if (strcmp(header, "framerate") == 0) // C 문자열 비교 strcmp, 같으면 0 반환.

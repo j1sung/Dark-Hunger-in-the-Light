@@ -14,6 +14,16 @@ namespace Dark
 		Blue = FOREGROUND_BLUE,
 		Green = FOREGROUND_GREEN,
 		Red = FOREGROUND_RED,
-		White = Blue | Green | Red
+		White = Blue | Green | Red,
+
+		BgBlue = BACKGROUND_BLUE,
+		BgGreen = BACKGROUND_GREEN,
+		BgRed = BACKGROUND_RED,
+		BgWhite = BgBlue | BgGreen | BgRed,
 	};
+
+	inline Color operator|(Color left, Color right)
+	{
+		return static_cast<Color>(static_cast<unsigned short>(left) | static_cast<unsigned short>(right));
+	}
 }

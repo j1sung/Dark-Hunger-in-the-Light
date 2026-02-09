@@ -13,6 +13,8 @@ void LevelManager::Initialize(Engine* engine)
 
 void LevelManager::RegisterLevel(State state, Level* level)
 {
+	// 벡터 특정 인덱스값에 값 저장하기 위해 인덱스 접근
+	// ex) MenuLevel = 0, GameLevel = 1
 	const int idx = static_cast<int>(state);
 	if (levels.size() <= idx)
 	{
@@ -41,4 +43,9 @@ void LevelManager::ToggleMenu()
 	{
 		SetState(State::GamePlay);
 	}
+}
+
+void LevelManager::QuitGame()
+{
+	engine->QuitEngine();
 }

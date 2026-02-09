@@ -128,8 +128,7 @@ namespace Dark
 
 			// 시작 위치.
 			const int visibleStart = startX < 0 ? 0 : startX;
-			const int visibleEnd
-				= endX >= screenSize.x ? screenSize.x - 1 : endX;
+			const int visibleEnd = endX >= screenSize.x ? screenSize.x - 1 : endX;
 
 			// 문자열 설정.
 			for (int x = visibleStart; x <= visibleEnd; ++x)
@@ -138,25 +137,20 @@ namespace Dark
 				const int sourceIndex = x - startX;
 
 				// 프레임 (2차원 문자 배열) 인덱스.
-				const int index
-					= (command.position.y * screenSize.x) + x;
+				const int index = (command.position.y * screenSize.x) + x;
 
 				// 그리기 우선순위 비교.
-				if (frame->sortingOrderArray[index]
-			> command.sortingOrder)
+				if (frame->sortingOrderArray[index] > command.sortingOrder)
 				{
 					continue;
 				}
 
 				// 데이터 기록.
-				frame->charInfoArray[index].Char.AsciiChar
-					= command.text[sourceIndex];
-				frame->charInfoArray[index].Attributes
-					= (WORD)command.color;
+				frame->charInfoArray[index].Char.AsciiChar = command.text[sourceIndex];
+				frame->charInfoArray[index].Attributes = (WORD)command.color;
 
 				// 우선순위 업데이트.
-				frame->sortingOrderArray[index]
-					= command.sortingOrder;
+				frame->sortingOrderArray[index] = command.sortingOrder;
 			}
 		}
 

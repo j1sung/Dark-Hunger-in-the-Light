@@ -164,12 +164,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Player.cpp" />
+    <ClCompile Include="Level\GameLevel.cpp" />
     <ClCompile Include="Level\LevelManager.cpp" />
+    <ClCompile Include="Level\MenuLevel.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Player.h" />
+    <ClInclude Include="Interface\ICanMove.h" />
+    <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\LevelManager.h" />
+    <ClInclude Include="Level\MenuLevel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

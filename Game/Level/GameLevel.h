@@ -1,18 +1,22 @@
 #pragma once
 
+#include "Level/LevelManager.h"
 #include "Level/Level.h"
 #include "Interface/ICanMove.h"
+#include "Data/GameData.h"
 #include "Math/Vector2.h"
 
 using namespace Dark;
 
-class GameLevel : public Level, ICanMove
+class GameLevel : public Level, public ICanMove
 {
 	RTTI_DECLARATIONS(GameLevel, Level)
 
 public:
 	GameLevel();
 	~GameLevel();
+
+	bool IsInWhiteSpaceAt(const Actor& actor, const Vector2& newPosition) const;
 
 private:
 
@@ -29,40 +33,51 @@ private:
 	void LoadMap(const char* filename);
 
 	// 액터 이동가능한지 판단하는 함수.
-	virtual bool CanMove(
-		const Actor& mover,
-		const Vector2& currentPos,
-		const Vector2& nextPos) override;
+	virtual bool CanMove(Actor& mover,const Vector2& nextPos) override;
 	
 	// 공격 충돌 판정 처리 함수.
-	void ProcessCollisionPlayerAttackAndEnemy(); // 플레이어 공격 -> 적 body
-	void ProcessCollisionPlayerAndEnemyIsAlive(); // 적 body(살아있을때만) -> 플레이어 body - (타격후 3초간 무적)
+	
+	// [플레이어 공격]: 플레이어 발사체-> 적 body
+	void ProcessCollisionPlayerAttackAndEnemy(); 
 
-	void ProcessCollisionPlayerAndEnemyIsDead(); // 플레이어 body -> 적 body(죽었을때만)
+	// [플레이어 수집]: 플레이어 body -> 적 body(죽었을때만)
+	void ProcessCollisionPlayerAndEnemyIsDead();
+
+	// [플레이어 스테이지 클리어]: 플레이어 body -> 벽 body(클리어시만)
+	void ProcessCollisionPlayerAndWall();
+
+	// [적 공격]: 적 body(살아있을때만) -> 플레이어 body - (타격후 3초간 무적)
+	void ProcessCollisionPlayerAndEnemyIsAlive();
+
+	// [적 이동]: 화이트 스페이스 범위에서만 이동 가능
+	void ProcessCollisionEnemyAndWhieSpace();
+
 
 	// 점수 보여주는 함수.
 	void ShowUI();
 
 private:
-	struct GameUI
-	{
-		int hp = 0;
-		int hungry = 0;
-		int eat = 0;
-		int power = 0;
 
-		char line1[128] = {};
-		char line2[128] = {};
+	// UI로 띄울 게임 데이터.
+	//GameData data;
 
-	};
+	// 적 확인 변수.
+	bool hadEnemy = false;
 
-	GameUI ui;
+	// 점수 UI 문자열.
+	char scoreString[128] = {};
 
 	// 화이트 스페이스인지 확인.
 	bool isWhiteSpace = false;
 
+	// 스테이지가 클리어 됐는지 확인.
+	bool isStageCleared = false;
+
 	// 플레이어가 죽었는지 확인.
 	bool isPlayerDead = false;
+
+	// 죽음 메시지 출력 됐는지 플래그.
+	bool deadSubmitted = false;
 
 	// 플레이어가 죽은 위치 (Draw에서 처리하기 위해 Tick에서 저장).
 	Vector2 playerDeadPosition;

@@ -107,51 +107,61 @@ namespace Dark
 				continue;
 			}
 
-			// 화면에 그릴 문자열 길이.
-			const int length = static_cast<int>(strlen(command.text));
+			// 여기 부분에서 ＼ｎ문자 판별하는거 로직 전체 뜯어바꿈
+			const char* text = command.text;
+			const int baseY = command.position.y;
 
-			// 안그려도 되면 건너뜀.
-			if (length <= 0)
+			const char* lineStart = text;
+			int lineIndex = 0;
+
+			while (lineStart)
 			{
-				continue;
-			}
+				const char* lineEnd = strchr(lineStart, '\n');
+				const int lineLength = lineEnd
+					? static_cast<int>(lineEnd - lineStart)
+					: static_cast<int>(strlen(lineStart));
 
-			// x좌표 기준으로 화면에서 벗어났는지 확인.
-			// 위치는 왼쪽 기준: "abcde"
-			const int startX = command.position.x;
-			const int endX = command.position.x + length - 1;
+				const int y = baseY + lineIndex;
 
-			if (endX < 0 || startX >= screenSize.x)
-			{
-				continue;
-			}
-
-			// 시작 위치.
-			const int visibleStart = startX < 0 ? 0 : startX;
-			const int visibleEnd = endX >= screenSize.x ? screenSize.x - 1 : endX;
-
-			// 문자열 설정.
-			for (int x = visibleStart; x <= visibleEnd; ++x)
-			{
-				// 문자열 안의 문자 인덱스.
-				const int sourceIndex = x - startX;
-
-				// 프레임 (2차원 문자 배열) 인덱스.
-				const int index = (command.position.y * screenSize.x) + x;
-
-				// 그리기 우선순위 비교.
-				if (frame->sortingOrderArray[index] > command.sortingOrder)
+				if (y >= 0 && y < screenSize.y && lineLength > 0)
 				{
-					continue;
+					// x?? ???? ???? ????? ??.
+					// ??? ?? ??: "abcde"
+					const int startX = command.position.x;
+					const int endX = command.position.x + lineLength - 1;
+
+					if (!(endX < 0 || startX >= screenSize.x))
+					{
+						// ?? ??.
+						const int visibleStart = startX < 0 ? 0 : startX;
+						const int visibleEnd = endX >= screenSize.x ? screenSize.x - 1 : endX;
+
+						for (int x = visibleStart; x <= visibleEnd; ++x)
+						{
+							const int sourceIndex = x - startX;
+							const int index = (y * screenSize.x) + x;
+
+							if (frame->sortingOrderArray[index] > command.sortingOrder)
+							{
+								continue;
+							}
+
+							frame->charInfoArray[index].Char.AsciiChar = lineStart[sourceIndex];
+							frame->charInfoArray[index].Attributes = (WORD)command.color;
+							frame->sortingOrderArray[index] = command.sortingOrder;
+						}
+					}
 				}
 
-				// 데이터 기록.
-				frame->charInfoArray[index].Char.AsciiChar = command.text[sourceIndex];
-				frame->charInfoArray[index].Attributes = (WORD)command.color;
+				if (!lineEnd)
+				{
+					break;
+				}
 
-				// 우선순위 업데이트.
-				frame->sortingOrderArray[index] = command.sortingOrder;
+				lineStart = lineEnd + 1;
+				++lineIndex;
 			}
+
 		}
 
 		// 그리기.
@@ -201,13 +211,14 @@ namespace Dark
 		renderQueue.emplace_back(command);
 	}
 
-	// 바로 그리기
-	void Renderer::PresentImmediately()
-	{
-		Draw();
-		GetCurrentBuffer()->Draw(frame->charInfoArray);
-		Present();
-	}
+	//// 바로 그리기
+	//void Renderer::PresentImmediately()
+	//{
+	//	// 이거 중복 로직아님?
+	//	Draw();
+	//	GetCurrentBuffer()->Draw(frame->charInfoArray);
+	//	Present();
+	//}
 
 	void Renderer::Present()
 	{

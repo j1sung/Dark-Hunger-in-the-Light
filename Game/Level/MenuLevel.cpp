@@ -13,7 +13,9 @@ MenuLevel::MenuLevel()
 		[]()
 		{
 			// 메뉴 토글 함수 호출.
-			LevelManager::Get().ToggleMenu();
+			//LevelManager::Get().ToggleMenu();
+			LevelManager::Get().SetState(State::GamePlay, true);
+
 		}
 	));
 
@@ -72,7 +74,7 @@ void MenuLevel::Tick(float deltaTime)
 void MenuLevel::Draw()
 {
 	// 메뉴 제목 출력
-	Renderer::Get().Submit("Dark:Hunger in the light", Vector2::Zero);
+	Renderer::Get().Submit("Black & White", Vector2::Zero);
 
 	// 메뉴 아이템 출력.
 	for (int ix = 0; ix < static_cast<int>(items.size()); ++ix)

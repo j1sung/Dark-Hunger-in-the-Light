@@ -70,7 +70,8 @@ namespace Util
 		// time(nullptr) → 1970-01-01 00:00:00 (Unix Epoch) 이후 경과한 초(second) 수 반환
 		// C 표준 난수 생성기 rand()의 초기 상태(seed)를 설정
 		// 같은 seed → 같은 난수 시퀀스
-		srand(static_cast<unsigned int>(time(nullptr)));
+		unsigned int seed = static_cast<unsigned int>(time(nullptr));
+		srand(seed);
 	}
 
 	// 정수 난수 함수. -> 이해가 더 필요

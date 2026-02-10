@@ -11,8 +11,7 @@ public:
 	// currentPos: 현재 위치
 	// nextPos: 다음 이동 위치
 	virtual bool CanMove(
-		const Dark::Actor& mover,
-		const Dark::Vector2& currentPos,
+		Dark::Actor& mover,
 		const Dark::Vector2& nextPos
 	) = 0;
 };

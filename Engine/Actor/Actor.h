@@ -42,8 +42,9 @@ namespace Dark
 		void ChangeImage(const char* newImage);
 
 		// 위치 변경 및 읽기 함수.
-		void SetPostion(const Vector2& newPosition);
+		void SetPosition(const Vector2& newPosition);
 		inline Vector2 GetPosition() const { return position; }
+		int GetRightmostX() const; // ai 코드
 
 		// 오너십 추가/읽기 함수.
 		inline void SetOwner(Level* newOwner) { owner = newOwner; }
@@ -67,9 +68,13 @@ namespace Dark
 
 		inline int GetSortingOrder() const { return sortingOrder; }
 
+		inline int GetWidth() const { return actorWidth; }
+		inline int GetHeight() const { return actorHeight; }
+
+
 		//inline ine GetWidth() const { return width; }
 
-	private:
+	protected:
 		// 그릴 문자(이미지).
 		char* image = nullptr;
 
@@ -94,8 +99,10 @@ namespace Dark
 		// 그리기 우선 순위 (값이 크면 우선순위가 높음).
 		int sortingOrder = 0;
 
-		// 문자열 길이.
-		int width = 0;
+		// 문자열 너비.
+		int actorWidth = 0;
+		// 문자열 높이.
+		int actorHeight = 0;
 	};
 
 }

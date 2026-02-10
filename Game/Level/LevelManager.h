@@ -2,6 +2,7 @@
 
 #include "Engine/Engine.h"
 #include "Level/Level.h"
+#include "Data/GameData.h"
 
 #include <vector>
 
@@ -19,7 +20,7 @@ public:
 
 	void Initialize(Engine* engine);
 	void RegisterLevel(State state, Level* level);
-	void SetState(State state);
+	void SetState(State state, bool reset = false);
 	void ToggleMenu();
 	void QuitGame();
 
@@ -34,4 +35,9 @@ private:
 
 	// 현재 활성화된 레벨을 나타내는 상태 변수
 	State current = State::GamePlay;
+
+public:
+	inline GameData& GetGameData() { return data; }
+private:
+	GameData data;
 };

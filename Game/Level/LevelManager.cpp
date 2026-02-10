@@ -1,4 +1,5 @@
 #include "LevelManager.h"
+#include "Level/GameLevel.h"
 
 LevelManager& LevelManager::Get()
 {
@@ -23,10 +24,22 @@ void LevelManager::RegisterLevel(State state, Level* level)
 	levels[idx] = level;
 }
 
-void LevelManager::SetState(State state)
+void LevelManager::SetState(State state, bool reset)
 {
 	current = state;
 	const int idx = static_cast<int>(state);
+
+	if (reset && state == State::GamePlay)
+	{
+		// 기존 레벨 삭제 후 새로 생성
+		if (idx < static_cast<int>(levels.size()) && levels[idx])
+		{
+			delete levels[idx];
+			levels[idx] = nullptr;
+		}
+		levels[idx] = new GameLevel();
+	}
+
 	if (engine && idx < static_cast<int>(levels.size()) && levels[idx])
 	{
 		engine->SetNewLevel(levels[idx]);
